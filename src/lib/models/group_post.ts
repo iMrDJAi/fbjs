@@ -7,5 +7,6 @@ export default interface GroupPost {
   id: string,
   contentText: string | null,
   contentHtml: string | null,
+  background: string | null,
   images: any[]
 }

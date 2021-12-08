@@ -16,6 +16,7 @@ module.exports = {
         'airbnb-typescript',
     ],
     rules: {
-        'no-console': 0
+        'no-console': 0,
+        'one-var': 0
     }
 };
