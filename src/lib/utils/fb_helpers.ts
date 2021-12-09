@@ -5,8 +5,11 @@ import {
 import Group_post from '../models/group_post';
 import Options from '../models/options';
 
-export function generateFacebookGroupURLById(id: string): string {
-  return `https://www.facebook.com/groups/${id}/`;
+export function generateFacebookGroupURLById(id: string, sort?: string): string {
+  const url = sort
+    ? `https://www.facebook.com/groups/${id}/?sorting_setting=${sort}`
+    : `https://www.facebook.com/groups/${id}/`;
+  return url;
 }
 /**
  * Function gets old publications.

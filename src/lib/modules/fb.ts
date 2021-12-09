@@ -130,9 +130,11 @@ export default class Facebook {
   /**
    * Function creates a Group instance
    * @param id The id of the group
+   * @param sort The group feed sorting setting.
+   * One of `RECENT_ACTIVITY`, `CHRONOLOGICAL` or `TOP_POSTS`.
    * @return Group The current group related to the scraper
    */
-  public group(id: string): Group {
-    return new Group(this.options, this.context, id);
+  public group(id: string, sort?: string): Group {
+    return new Group(this.options, this.context, id, sort);
   }
 }

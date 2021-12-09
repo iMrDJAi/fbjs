@@ -18,32 +18,40 @@ export default class Group {
 
   private id: string;
 
-  private url: string;
+  private sort? : string;
+
+  private get url() {
+    return generateFacebookGroupURLById(this.id, this.sort);
+  }
+
+  private stopped: boolean = false;
 
   constructor(
     options: Options & { cookiesFile: string },
     context: BrowserContext,
     id: string,
+    sort?: string,
   ) {
     this.options = options;
     this.context = context;
     this.page = null!;
     this.id = id;
-    this.url = generateFacebookGroupURLById(id);
+    this.sort = sort;
   }
 
   /**
    * Function saves the group posts
    * @param callback
    * @param outputFile
-   * @param disableAssets Defaults to `true`.
-   * Set to `false` to disable loading assets to improve performance
+   * @param disableAssets Disable loading assets to improve performance. Defaults to `true`.
    */
   public async getPosts(
     callback: (arg0: Group_post) => void,
     outputFile: string | true,
     disableAssets: boolean = true,
   ) {
+    this.stopped = false;
+
     let outputFileName = outputFile === true ? `${this.id}.json` : outputFile;
     outputFileName = outputFileName ? `${outputFileName.replace(/\.json$/g, '')}.json` : outputFileName;
 
@@ -103,6 +111,10 @@ export default class Group {
      * @param force
      */
     const handlePosts = async (force: boolean): Promise<void> => {
+      if (this.stopped) {
+        await this.page.goto('about:blank');
+        return;
+      }
       if (busy && !force) return;
       busy = true;
       const postHnd = await this.page?.evaluateHandle(() => window.posts.shift());
@@ -322,8 +334,9 @@ export default class Group {
           const style = await this.page.evaluate(
             (el: HTMLElement) => el.getAttribute('style'),
             bg,
-          );
-          background = style;
+          ) || '';
+          const match = style.match(/url\("(.+)"\)/);
+          background = match ? match[1] : null;
         } else {
           background = null;
         }
@@ -401,5 +414,18 @@ export default class Group {
     };
 
     return groupPost;
+  }
+
+  /**
+   * Stop current operation
+   */
+  public async stop() {
+    this.stopped = true;
+    try {
+      await this.page.waitForNavigation();
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
