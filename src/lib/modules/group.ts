@@ -3,7 +3,7 @@ import {
   autoScroll, generateFacebookGroupURLById, savePost,
   promiseTimeout, blankTab, disableAssetsLoad, selectHnd,
 } from '../utils/fb_helpers';
-import Group_post from '../models/group_post';
+import Post from '../models/Post';
 import Options from '../models/options';
 import Selectors from '../utils/Selectors';
 
@@ -46,7 +46,7 @@ export default class Group {
    * @param disableAssets Disable loading assets to improve performance. Defaults to `true`.
    */
   public async getPosts(
-    callback: (arg0: Group_post) => void,
+    callback: (arg0: Post | null) => void,
     outputFile: string | true,
     disableAssets: boolean = true,
   ) {
@@ -72,10 +72,10 @@ export default class Group {
      * Waiting for the group name before we continue
      * to avoid "selector not found" error.
      */
-    await this.page.waitForSelector(selectors.group.name);
+    await this.page.waitForSelector(Selectors.group.name);
 
     // Extract the group name
-    const groupNameElm = await this.page.$(selectors.group.name);
+    const groupNameElm = await this.page.$(Selectors.group.name);
     const groupName = await this.page.evaluate(
       (el: HTMLElement) => el.textContent,
       groupNameElm,
@@ -98,7 +98,8 @@ export default class Group {
      * specifically announcements, because they don't follow
      * the same sorting method as the others.
      */
-    await this.page.waitForSelector(selectors.group.feed_container);
+    await this.page.waitForSelector(Selectors.group.feed);
+    const feed = (await this.page.$(Selectors.group.feed))!;
 
     /**
      * This will ensure that the function `handlePosts`
@@ -125,6 +126,12 @@ export default class Group {
         handlePosts(true);
       } else {
         busy = false;
+        const isLoading = await selectHnd(feed, Selectors.group.feed_is_loading);
+        if (!isLoading) {
+          this.stop();
+          await handlePosts(true);
+          if (callback) callback(null);
+        }
       }
     };
 
@@ -132,11 +139,8 @@ export default class Group {
     this.page.exposeFunction('handlePosts', handlePosts);
 
     // Listen to new fetched posts
-    const listen = (sel: typeof Selectors) => {
-      window.posts = [];
-      const target = <HTMLElement>document.querySelector(
-        sel.group.feed_container,
-      );
+    const listen = (target: HTMLElement, sel: typeof Selectors) => {
+      window.posts = Array.from(target.querySelectorAll(sel.post.element));
       const observer = new MutationObserver((mutations) => {
         for (let i = 0; i < mutations.length; i += 1) {
           for (let j = 0; j < mutations[i].addedNodes.length; j += 1) {
@@ -153,7 +157,7 @@ export default class Group {
     };
 
     // Start Listening
-    this.page.evaluate(listen, selectors);
+    this.page.evaluate(listen, feed, selectors);
   }
 
   /**
@@ -177,7 +181,7 @@ export default class Group {
        * the script from hovering and this will cause errors, because of that
        * we recommend users to run the scraper under the headless mode.
        * */
-      const postLink = (await postHnd.$(selectors.post.permalink))!;
+      const postLink = (await postHnd.$(Selectors.post.permalink))!;
 
       // Reset cursor position
       try {
@@ -228,6 +232,7 @@ export default class Group {
           },
           postLink,
         );
+        date = date.replace('at ', '');
       } catch (err: any) {
         console.error('Date: ', err.message);
         return await getPostMetadata();
@@ -307,10 +312,11 @@ export default class Group {
       let contentText: string | null,
         contentHtml: string | null,
         background: string | null,
-        images: any[] = [];
+        images: any[] = [],
+        file: { name: string, url: string } | null = null;
 
-      let txt = await selectHnd(postHnd, selectors.post.txt);
-      const seeOg = await selectHnd(postHnd, selectors.post.see_og);
+      let txt = await selectHnd(postHnd, Selectors.post.txt);
+      const seeOg = await selectHnd(postHnd, Selectors.post.see_og);
 
       if (!txt && seeOg) {
         await seeOg.click();
@@ -320,12 +326,12 @@ export default class Group {
           postHnd,
           selectors,
         );
-        txt = await selectHnd(postHnd, selectors.post.txt);
+        txt = await selectHnd(postHnd, Selectors.post.txt);
       }
 
-      const isTxt = await selectHnd(postHnd, selectors.post.is_txt);
-      const bg = await selectHnd(postHnd, selectors.post.bg);
-      const bgTxt = await selectHnd(postHnd, selectors.post.bg_txt);
+      const isTxt = await selectHnd(postHnd, Selectors.post.is_txt);
+      const bg = await selectHnd(postHnd, Selectors.post.bg);
+      const bgTxt = await selectHnd(postHnd, Selectors.post.bg_txt);
 
       if (txt && isTxt) {
         const txtElm = bgTxt || txt;
@@ -341,7 +347,7 @@ export default class Group {
           background = null;
         }
 
-        const seeMore = await selectHnd(txtElm, selectors.post.see_more);
+        const seeMore = await selectHnd(txtElm, Selectors.post.see_more);
         if (seeMore) {
           const textLength = await this.page.evaluate(
             (el: HTMLElement) => el.innerText.length,
@@ -370,8 +376,8 @@ export default class Group {
         background = null;
       }
 
-      const attach = await selectHnd(postHnd, selectors.post.attach);
-      const isAttach = await selectHnd(postHnd, selectors.post.is_attach);
+      const attach = await selectHnd(postHnd, Selectors.post.attach);
+      const isAttach = await selectHnd(postHnd, Selectors.post.is_attach);
 
       if (attach && isAttach) {
         images = await this.page.evaluate(
@@ -387,6 +393,21 @@ export default class Group {
           attach,
           selectors,
         );
+
+        file = await this.page.evaluate(
+          (el: HTMLElement, sel: typeof Selectors) => {
+            const fileElm = el.querySelector(sel.post.file);
+            if (fileElm) {
+              return {
+                name: fileElm.getAttribute('aria-label')!,
+                url: fileElm.getAttribute('href')!,
+              };
+            }
+            return null;
+          },
+          attach,
+          selectors,
+        );
       }
 
       return {
@@ -394,13 +415,14 @@ export default class Group {
         contentHtml,
         background,
         images,
+        file,
       };
     };
 
     const postContent = await getPostContent();
 
-    // creates a post object which contains our post
-    const groupPost: Group_post = {
+    // creates a post object which contains our post data
+    const groupPost: Post = {
       authorName: <string>postAuthor.authorName,
       authorUrl: <string | null>postAuthor.authorUrl,
       authorAvatar: <string | null>postAuthor.authorAvatar,
@@ -411,6 +433,7 @@ export default class Group {
       contentHtml: <string | null>postContent.contentHtml,
       background: <string | null>postContent.background,
       images: <any[]>postContent.images,
+      file: <string | null>postContent.file,
     };
 
     return groupPost;

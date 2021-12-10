@@ -8,7 +8,8 @@ export default class Selectors {
 
   static group = {
     name: 'h1[dir=auto] span[dir=auto]',
-    feed_container: 'div[role=feed]',
+    feed: 'div[role=feed]',
+    feed_is_loading: 'div[role=progressbar]',
   };
 
   static post = {
@@ -33,9 +34,8 @@ export default class Selectors {
     get attach() { return `${this.content}> div:last-child[class][id]`; },
     get is_attach() { return `${this.attach}> :nth-last-child(2)`; },
 
-    file: 'a[aria-label][role=link]',
-
-    video: 'a',
     img: 'img',
+    file: 'a[aria-label][role=link]',
+    video: 'a',
   };
 }

@@ -2,7 +2,7 @@ import fs from 'fs';
 import {
   Page, BrowserContext, HTTPResponse, ElementHandle,
 } from 'puppeteer';
-import Group_post from '../models/group_post';
+import Post from '../models/Post';
 import Options from '../models/options';
 
 export function generateFacebookGroupURLById(id: string, sort?: string): string {
@@ -17,7 +17,7 @@ export function generateFacebookGroupURLById(id: string, sort?: string): string 
  * @param {type} fileName name of the file
  * @return {Object[]} returns the list of all publications.
  * */
-export function getOldPublications(fileName: string): Group_post[] {
+export function getOldPublications(fileName: string): Post[] {
   let allPublicationsList;
   if (fs.existsSync(fileName)) {
     // If file exists
@@ -36,7 +36,7 @@ export function getOldPublications(fileName: string): Group_post[] {
  * @param postData
  * @param outputFile
  */
-export function savePost(postData: Group_post, outputFile: string): void {
+export function savePost(postData: Post, outputFile: string): void {
   const allPublicationsList = getOldPublications(outputFile);
   allPublicationsList.push(postData);
   fs.writeFileSync(
