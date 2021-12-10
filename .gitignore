@@ -7,5 +7,5 @@ node_modules
 static
 !.eslintrc.json
 !spec/support/jasmine.json
-dist
+//dist
 .idea
