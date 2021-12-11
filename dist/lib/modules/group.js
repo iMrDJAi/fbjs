@@ -57,6 +57,7 @@ class Group {
             }
             else {
                 busy = false;
+                this.page.evaluate(fb_helpers_1.autoScroll);
                 const isLoading = await fb_helpers_1.selectHnd(feed, Selectors_1.default.group.feed_is_loading);
                 if (!isLoading) {
                     this.stop();

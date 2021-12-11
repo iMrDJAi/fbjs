@@ -126,6 +126,7 @@ export default class Group {
         handlePosts(true);
       } else {
         busy = false;
+        this.page.evaluate(autoScroll);
         const isLoading = await selectHnd(feed, Selectors.group.feed_is_loading);
         if (!isLoading) {
           this.stop();
