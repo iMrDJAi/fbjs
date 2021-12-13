@@ -7,5 +7,6 @@ export default interface Options {
   cookiesFile: string | true;
   debug: boolean;
   dumpio: boolean;
+  changeUserAgent: boolean;
   executablePath?: string;
 }

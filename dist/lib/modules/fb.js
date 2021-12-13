@@ -16,6 +16,7 @@ class Facebook {
             maximized: false,
             debug: false,
             dumpio: false,
+            changeUserAgent: true,
         };
         let { cookiesFile } = options;
         cookiesFile = cookiesFile === true ? 'fbjs_cookies.json' : cookiesFile;

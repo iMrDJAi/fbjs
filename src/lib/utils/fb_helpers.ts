@@ -132,7 +132,9 @@ export async function blankTab(
   let page = pages.find((p) => p.url() === 'about:blank');
   if (!page && options) {
     page = await context.newPage();
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3419.0 Safari/537.36');
+    if (options.changeUserAgent) {
+      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3419.0 Safari/537.36');
+    }
     let cookiesString;
     if (options.cookiesString) {
       cookiesString = options.cookiesString;
