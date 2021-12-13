@@ -15,7 +15,7 @@ export default class Selectors {
   static post = {
     element: 'div[role=article][aria-labelledby]',
 
-    permalink: 'span[dir=auto] > span a',
+    permalink: 'span[dir=auto] > span a[aria-label]',
 
     author_name: ':is(h2, h3, h4) span a',
     author_name_alt: ':is(h2, h3, h4) strong',
