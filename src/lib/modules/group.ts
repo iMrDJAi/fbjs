@@ -172,6 +172,7 @@ export default class Group {
      */
     const getPostMetadata = async (): Promise<any> => {
       let date: string | null,
+        timestamp: number,
         permalink: string | null,
         id: string | null;
 
@@ -252,6 +253,11 @@ export default class Group {
         return await getPostMetadata();
       }
 
+      // Date to timestamp
+      // eslint-disable-next-line
+      timestamp = +date;
+      // False positive ._.
+
       // Grab the permalink
       try {
         permalink = await this.page.evaluate(
@@ -266,7 +272,7 @@ export default class Group {
       // Extract the id
       // eslint-disable-next-line
       id = permalink.replace(/^.+\//, '');
-      // False positive ._.
+      // False positive v2 ._.
 
       // Reset cursor position again
       try {
@@ -278,6 +284,7 @@ export default class Group {
 
       return {
         date,
+        timestamp,
         permalink,
         id,
       };
@@ -441,6 +448,7 @@ export default class Group {
       authorUrl: <string | null>postAuthor.authorUrl,
       authorAvatar: <string | null>postAuthor.authorAvatar,
       date: <string>postMetadata.date,
+      timestamp: <number>postMetadata.timestamp,
       permalink: <string>postMetadata.permalink,
       id: <string>postMetadata.id,
       contentText: <string | null>postContent.contentText,

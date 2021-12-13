@@ -89,7 +89,7 @@ class Group {
     async parsePost(postHnd) {
         const getPostMetadata = async () => {
             var _a, _b;
-            let date, permalink, id;
+            let date, timestamp, permalink, id;
             const postLink = (await postHnd.$(Selectors_1.default.post.permalink));
             try {
                 await fb_helpers_1.promiseTimeout((_a = this.page) === null || _a === void 0 ? void 0 : _a.mouse.move(0, 0), 200);
@@ -143,6 +143,7 @@ class Group {
                 console.error('Date: ', err.message);
                 return await getPostMetadata();
             }
+            timestamp = +date;
             try {
                 permalink = await this.page.evaluate((el) => el.getAttribute('href').replace(/(\/\?.+)$/, ''), postLink);
             }
@@ -160,6 +161,7 @@ class Group {
             }
             return {
                 date,
+                timestamp,
                 permalink,
                 id,
             };
@@ -268,6 +270,7 @@ class Group {
             authorUrl: postAuthor.authorUrl,
             authorAvatar: postAuthor.authorAvatar,
             date: postMetadata.date,
+            timestamp: postMetadata.timestamp,
             permalink: postMetadata.permalink,
             id: postMetadata.id,
             contentText: postContent.contentText,

@@ -3,6 +3,7 @@ export default interface Post {
   authorUrl: string | null,
   authorAvatar: string | null,
   date: string,
+  timestamp: number,
   permalink: string,
   id: string,
   contentText: string | null,
