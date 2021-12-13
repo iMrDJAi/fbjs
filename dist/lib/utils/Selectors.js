@@ -18,7 +18,7 @@ Selectors.post = {
     element: 'div[role=article][aria-labelledby]',
     permalink: 'span[dir=auto] > span a',
     author_name: ':is(h2, h3, h4) span a',
-    author_name_alt: ':is(h2, h3, h4) strong span',
+    author_name_alt: ':is(h2, h3, h4) strong',
     author_avatar: 'svg image',
     content: 'div:not([class]) > div:not([class]):nth-child(3)',
     get txt() { return `${this.content}> div:first-child`; },
