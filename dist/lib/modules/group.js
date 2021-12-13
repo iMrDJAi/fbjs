@@ -121,7 +121,7 @@ class Group {
                 await this.page.waitForFunction((el) => {
                     const span = el.parentElement;
                     return span.getAttribute('aria-describedby') !== null;
-                }, { timeout: 200 }, postLink);
+                }, { timeout: 600 }, postLink);
             }
             catch (err) {
                 console.error('Tooltip: ', err.message);

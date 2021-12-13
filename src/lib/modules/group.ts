@@ -224,7 +224,7 @@ export default class Group {
             const span = el.parentElement!;
             return span.getAttribute('aria-describedby') !== null;
           },
-          { timeout: 200 },
+          { timeout: 600 },
           postLink,
         );
       } catch (err: any) {
