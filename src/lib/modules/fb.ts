@@ -92,13 +92,14 @@ export default class Facebook {
         '--disable-accelerated-2d-canvas',
         '--disable-gpu',
       ],
+      executablePath: this.options.executablePath,
     };
     if (this.options.maximized && !this.options.headless) {
       browserOptions.args?.push('--start-maximized');
     } else {
       browserOptions.args?.push(`--window-size=${this.options.width},${this.options.height}`);
     }
-    if (process.arch === 'arm' || process.arch === 'arm64') {
+    if (!browserOptions.executablePath && (process.arch === 'arm' || process.arch === 'arm64')) {
       // If processor architecture is arm or arm64 we need to use chromium browser
       browserOptions.executablePath = 'chromium-browser';
     }

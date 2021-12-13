@@ -49,6 +49,7 @@ class Facebook {
                 '--disable-accelerated-2d-canvas',
                 '--disable-gpu',
             ],
+            executablePath: this.options.executablePath,
         };
         if (this.options.maximized && !this.options.headless) {
             (_a = browserOptions.args) === null || _a === void 0 ? void 0 : _a.push('--start-maximized');
@@ -56,7 +57,7 @@ class Facebook {
         else {
             (_b = browserOptions.args) === null || _b === void 0 ? void 0 : _b.push(`--window-size=${this.options.width},${this.options.height}`);
         }
-        if (process.arch === 'arm' || process.arch === 'arm64') {
+        if (!browserOptions.executablePath && (process.arch === 'arm' || process.arch === 'arm64')) {
             browserOptions.executablePath = 'chromium-browser';
         }
         this.browser = await puppeteer_1.default.launch(browserOptions);
