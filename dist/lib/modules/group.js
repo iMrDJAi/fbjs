@@ -99,6 +99,15 @@ class Group {
                 return await getPostMetadata();
             }
             try {
+                await this.page.evaluate((el) => {
+                    el.scrollIntoView({ block: 'center', inline: 'nearest' });
+                }, postLink);
+            }
+            catch (err) {
+                console.error('Scroll: ', err.message);
+                return await getPostMetadata();
+            }
+            try {
                 await fb_helpers_1.promiseTimeout(postLink.hover(), 200);
             }
             catch (err) {
@@ -112,7 +121,7 @@ class Group {
                 await this.page.waitForFunction((el) => {
                     const span = el.parentElement;
                     return span.getAttribute('aria-describedby') !== null;
-                }, {}, postLink);
+                }, { timeout: 200 }, postLink);
             }
             catch (err) {
                 console.error('Tooltip: ', err.message);

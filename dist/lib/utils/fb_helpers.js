@@ -51,7 +51,7 @@ function promiseTimeout(promise, time) {
 exports.promiseTimeout = promiseTimeout;
 async function acceptCookies(page) {
     try {
-        await page.waitForXPath('//button[@data-cookiebanner="accept_button"]');
+        await page.waitForXPath('//button[@data-cookiebanner="accept_button"]', { timeout: 2000 });
         const acceptCookiesButton = (await page.$x('//button[@data-cookiebanner="accept_button"]'))[0];
         await page.evaluate((el) => {
             el.focus();

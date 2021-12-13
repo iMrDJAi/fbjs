@@ -192,6 +192,19 @@ export default class Group {
         return await getPostMetadata();
       }
 
+      // Scroll to element
+      try {
+        await this.page.evaluate(
+          (el: HTMLElement) => {
+            el.scrollIntoView({ block: 'center', inline: 'nearest' });
+          },
+          postLink,
+        );
+      } catch (err: any) {
+        console.error('Scroll: ', err.message);
+        return await getPostMetadata();
+      }
+
       // Hover
       try {
         await promiseTimeout(postLink.hover(), 200);
@@ -211,7 +224,7 @@ export default class Group {
             const span = el.parentElement!;
             return span.getAttribute('aria-describedby') !== null;
           },
-          {},
+          { timeout: 200 },
           postLink,
         );
       } catch (err: any) {
