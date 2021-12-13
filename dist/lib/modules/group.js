@@ -108,7 +108,7 @@ class Group {
                 return await getPostMetadata();
             }
             try {
-                await fb_helpers_1.promiseTimeout(postLink.hover(), 200);
+                await fb_helpers_1.promiseTimeout(postLink.hover(), 500);
             }
             catch (err) {
                 console.error('Hover: ', err.message);
@@ -121,7 +121,7 @@ class Group {
                 await this.page.waitForFunction((el) => {
                     const span = el.parentElement;
                     return span.getAttribute('aria-describedby') !== null;
-                }, { timeout: 600 }, postLink);
+                }, { timeout: 800 }, postLink);
             }
             catch (err) {
                 console.error('Tooltip: ', err.message);
@@ -197,7 +197,7 @@ class Group {
             const seeOg = await fb_helpers_1.selectHnd(postHnd, Selectors_1.default.post.see_og);
             if (!txt && seeOg) {
                 await seeOg.click();
-                await this.page.waitForFunction((el, sel) => !!el.querySelector(sel.post.txt), {}, postHnd, selectors);
+                await this.page.waitForFunction((el, sel) => !!el.querySelector(sel.post.txt), { timeout: 2000 }, postHnd, selectors);
                 txt = await fb_helpers_1.selectHnd(postHnd, Selectors_1.default.post.txt);
             }
             const isTxt = await fb_helpers_1.selectHnd(postHnd, Selectors_1.default.post.is_txt);
@@ -217,7 +217,7 @@ class Group {
                 if (seeMore) {
                     const textLength = await this.page.evaluate((el) => el.innerText.length, txtElm);
                     await seeMore.click();
-                    await this.page.waitForFunction((el, len) => el.innerText.length !== len, {}, txtElm, textLength);
+                    await this.page.waitForFunction((el, len) => el.innerText.length !== len, { timeout: 2000 }, txtElm, textLength);
                 }
                 const { innerText, innerHTML } = await this.page.evaluate((el) => ({
                     innerText: el.innerText,

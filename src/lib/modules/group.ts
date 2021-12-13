@@ -207,7 +207,7 @@ export default class Group {
 
       // Hover
       try {
-        await promiseTimeout(postLink.hover(), 200);
+        await promiseTimeout(postLink.hover(), 500);
       } catch (err: any) {
         console.error('Hover: ', err.message);
         // That's why you should not minimize the browser window
@@ -224,7 +224,7 @@ export default class Group {
             const span = el.parentElement!;
             return span.getAttribute('aria-describedby') !== null;
           },
-          { timeout: 600 },
+          { timeout: 800 },
           postLink,
         );
       } catch (err: any) {
@@ -336,7 +336,7 @@ export default class Group {
         await seeOg.click();
         await this.page.waitForFunction(
           (el: HTMLElement, sel: typeof Selectors) => !!el.querySelector(sel.post.txt),
-          {},
+          { timeout: 2000 },
           postHnd,
           selectors,
         );
@@ -370,7 +370,7 @@ export default class Group {
           await seeMore.click();
           await this.page.waitForFunction(
             (el: HTMLElement, len: number) => el.innerText.length !== len,
-            {},
+            { timeout: 2000 },
             txtElm,
             textLength,
           );
