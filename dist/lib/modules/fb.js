@@ -29,9 +29,9 @@ class Facebook {
         const browser = this.browser || await this.launchBrowser();
         const incognitoContext = await browser.createIncognitoBrowserContext();
         this.context = incognitoContext;
-        await fb_helpers_1.blankTab(incognitoContext, this.options);
+        await (0, fb_helpers_1.blankTab)(incognitoContext, this.options);
         const defaultBrowserContext = this.browser.defaultBrowserContext();
-        const tab = await fb_helpers_1.blankTab(defaultBrowserContext);
+        const tab = await (0, fb_helpers_1.blankTab)(defaultBrowserContext);
         if (tab) {
             tab.close();
         }

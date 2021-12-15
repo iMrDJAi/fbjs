@@ -16,18 +16,18 @@ class Group {
         this.sort = sort;
     }
     get url() {
-        return fb_helpers_1.generateFacebookGroupURLById(this.id, this.sort);
+        return (0, fb_helpers_1.generateFacebookGroupURLById)(this.id, this.sort);
     }
     async getPosts(callback, outputFile, disableAssets = true) {
         this.stopped = false;
         let outputFileName = outputFile === true ? `${this.id}.json` : outputFile;
         outputFileName = outputFileName ? `${outputFileName.replace(/\.json$/g, '')}.json` : outputFileName;
-        this.page = this.page || (await fb_helpers_1.blankTab(this.context, this.options));
+        this.page = this.page || (await (0, fb_helpers_1.blankTab)(this.context, this.options));
         await this.page.goto(this.url, {
             timeout: 600000,
         });
         if (disableAssets) {
-            await fb_helpers_1.disableAssetsLoad(this.page);
+            await (0, fb_helpers_1.disableAssetsLoad)(this.page);
         }
         await this.page.waitForSelector(Selectors_1.default.group.name);
         const groupNameElm = await this.page.$(Selectors_1.default.group.name);
@@ -52,13 +52,13 @@ class Group {
                 if (callback)
                     callback(postData);
                 if (outputFileName)
-                    fb_helpers_1.savePost(postData, outputFileName);
+                    (0, fb_helpers_1.savePost)(postData, outputFileName);
                 handlePosts(true);
             }
             else {
                 busy = false;
                 this.page.evaluate(fb_helpers_1.autoScroll);
-                const isLoading = await fb_helpers_1.selectHnd(feed, Selectors_1.default.group.feed_is_loading);
+                const isLoading = await (0, fb_helpers_1.selectHnd)(feed, Selectors_1.default.group.feed_is_loading);
                 if (!isLoading) {
                     this.stop();
                     await handlePosts(true);
@@ -92,7 +92,7 @@ class Group {
             let date, timestamp, permalink, id;
             const postLink = (await postHnd.$(Selectors_1.default.post.permalink));
             try {
-                await fb_helpers_1.promiseTimeout((_a = this.page) === null || _a === void 0 ? void 0 : _a.mouse.move(0, 0), 200);
+                await (0, fb_helpers_1.promiseTimeout)((_a = this.page) === null || _a === void 0 ? void 0 : _a.mouse.move(0, 0), 200);
             }
             catch (err) {
                 console.error('Move: ', err.message);
@@ -108,7 +108,7 @@ class Group {
                 return await getPostMetadata();
             }
             try {
-                await fb_helpers_1.promiseTimeout(postLink.hover(), 500);
+                await (0, fb_helpers_1.promiseTimeout)(postLink.hover(), 500);
             }
             catch (err) {
                 console.error('Hover: ', err.message);
@@ -153,7 +153,7 @@ class Group {
             }
             id = permalink.replace(/^.+\//, '');
             try {
-                await fb_helpers_1.promiseTimeout((_b = this.page) === null || _b === void 0 ? void 0 : _b.mouse.move(0, 0), 200);
+                await (0, fb_helpers_1.promiseTimeout)((_b = this.page) === null || _b === void 0 ? void 0 : _b.mouse.move(0, 0), 200);
             }
             catch (err) {
                 console.error('Move: ', err.message);
@@ -195,16 +195,16 @@ class Group {
         const postAuthor = await this.page.evaluate(getPostAuthor, postHnd, selectors);
         const getPostContent = async () => {
             let contentText, contentHtml, background, images = [], file = null;
-            let txt = await fb_helpers_1.selectHnd(postHnd, Selectors_1.default.post.txt);
-            const seeOg = await fb_helpers_1.selectHnd(postHnd, Selectors_1.default.post.see_og);
+            let txt = await (0, fb_helpers_1.selectHnd)(postHnd, Selectors_1.default.post.txt);
+            const seeOg = await (0, fb_helpers_1.selectHnd)(postHnd, Selectors_1.default.post.see_og);
             if (!txt && seeOg) {
                 await seeOg.click();
                 await this.page.waitForFunction((el, sel) => !!el.querySelector(sel.post.txt), { timeout: 2000 }, postHnd, selectors);
-                txt = await fb_helpers_1.selectHnd(postHnd, Selectors_1.default.post.txt);
+                txt = await (0, fb_helpers_1.selectHnd)(postHnd, Selectors_1.default.post.txt);
             }
-            const isTxt = await fb_helpers_1.selectHnd(postHnd, Selectors_1.default.post.is_txt);
-            const bg = await fb_helpers_1.selectHnd(postHnd, Selectors_1.default.post.bg);
-            const bgTxt = await fb_helpers_1.selectHnd(postHnd, Selectors_1.default.post.bg_txt);
+            const isTxt = await (0, fb_helpers_1.selectHnd)(postHnd, Selectors_1.default.post.is_txt);
+            const bg = await (0, fb_helpers_1.selectHnd)(postHnd, Selectors_1.default.post.bg);
+            const bgTxt = await (0, fb_helpers_1.selectHnd)(postHnd, Selectors_1.default.post.bg_txt);
             if (txt && isTxt) {
                 const txtElm = bgTxt || txt;
                 if (bg) {
@@ -215,7 +215,7 @@ class Group {
                 else {
                     background = null;
                 }
-                const seeMore = await fb_helpers_1.selectHnd(txtElm, Selectors_1.default.post.see_more);
+                const seeMore = await (0, fb_helpers_1.selectHnd)(txtElm, Selectors_1.default.post.see_more);
                 if (seeMore) {
                     const textLength = await this.page.evaluate((el) => el.innerText.length, txtElm);
                     await seeMore.click();
@@ -233,8 +233,8 @@ class Group {
                 contentHtml = null;
                 background = null;
             }
-            const attach = await fb_helpers_1.selectHnd(postHnd, Selectors_1.default.post.attach);
-            const isAttach = await fb_helpers_1.selectHnd(postHnd, Selectors_1.default.post.is_attach);
+            const attach = await (0, fb_helpers_1.selectHnd)(postHnd, Selectors_1.default.post.attach);
+            const isAttach = await (0, fb_helpers_1.selectHnd)(postHnd, Selectors_1.default.post.is_attach);
             if (attach && isAttach) {
                 images = await this.page.evaluate((el, sel) => {
                     const imgs = [];

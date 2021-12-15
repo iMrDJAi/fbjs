@@ -16,15 +16,15 @@ class Login {
         this.page = null;
     }
     async login(credentials) {
-        this.page = (await fb_helpers_1.blankTab(this.context, this.options));
+        this.page = (await (0, fb_helpers_1.blankTab)(this.context, this.options));
         const res = await this.page.goto(this.url);
-        const isLoggedIn = await fb_helpers_1.checkLoginStatus(res);
+        const isLoggedIn = await (0, fb_helpers_1.checkLoginStatus)(res);
         if (isLoggedIn || !credentials) {
             const cookies = isLoggedIn ? await this.handleCookies(false) : null;
             await this.page.goto('about:blank');
             return cookies;
         }
-        await fb_helpers_1.acceptCookies(this.page);
+        await (0, fb_helpers_1.acceptCookies)(this.page);
         await this.completeLoginForm(credentials.username, credentials.password);
         if (await this.checkFor2FA()) {
             throw new two_fa_required_error_1.default();

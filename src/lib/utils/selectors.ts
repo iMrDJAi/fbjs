@@ -35,7 +35,7 @@ export default class Selectors {
     get is_attach() { return `${this.attach}> :nth-last-child(2)`; },
 
     img: 'img',
-    file: 'a[aria-label][role=link]',
+    file: 'div:only-child > a[aria-label][role=link]',
     video: 'a',
   };
 }
