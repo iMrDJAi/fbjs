@@ -27,6 +27,7 @@ export default class Selectors {
         readonly is_attach: string;
         img: string;
         file: string;
+        url: string;
         video: string;
     };
 }

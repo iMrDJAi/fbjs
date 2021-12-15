@@ -334,6 +334,7 @@ export default class Group {
         contentHtml: string | null,
         background: string | null,
         images: any[] = [],
+        url: string | null = null,
         file: { name: string, url: string } | null = null;
 
       let txt = await selectHnd(postHnd, Selectors.post.txt);
@@ -415,6 +416,18 @@ export default class Group {
           selectors,
         );
 
+        url = await this.page.evaluate(
+          (el: HTMLElement, sel: typeof Selectors) => {
+            const urlElm = el.querySelector(sel.post.url);
+            if (urlElm) {
+              return urlElm.getAttribute('href')!;
+            }
+            return null;
+          },
+          attach,
+          selectors,
+        );
+
         file = await this.page.evaluate(
           (el: HTMLElement, sel: typeof Selectors) => {
             const fileElm = el.querySelector(sel.post.file);
@@ -436,6 +449,7 @@ export default class Group {
         contentHtml,
         background,
         images,
+        url,
         file,
       };
     };
@@ -455,6 +469,7 @@ export default class Group {
       contentHtml: <string | null>postContent.contentHtml,
       background: <string | null>postContent.background,
       images: <any[]>postContent.images,
+      url: <string | null>postContent.url,
       file: <string | null>postContent.file,
     };
 

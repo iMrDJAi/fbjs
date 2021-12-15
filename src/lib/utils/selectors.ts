@@ -36,6 +36,7 @@ export default class Selectors {
 
     img: 'img',
     file: 'div:only-child > a[aria-label][role=link]',
+    url: 'div:only-child > a[target=_blank][role=link]',
     video: 'a',
   };
 }

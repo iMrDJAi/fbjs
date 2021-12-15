@@ -10,5 +10,6 @@ export default interface Post {
     contentHtml: string | null;
     background: string | null;
     images: any[];
+    url: string | null;
     file: string | null;
 }

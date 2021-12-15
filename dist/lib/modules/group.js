@@ -194,7 +194,7 @@ class Group {
         };
         const postAuthor = await this.page.evaluate(getPostAuthor, postHnd, selectors);
         const getPostContent = async () => {
-            let contentText, contentHtml, background, images = [], file = null;
+            let contentText, contentHtml, background, images = [], url = null, file = null;
             let txt = await (0, fb_helpers_1.selectHnd)(postHnd, Selectors_1.default.post.txt);
             const seeOg = await (0, fb_helpers_1.selectHnd)(postHnd, Selectors_1.default.post.see_og);
             if (!txt && seeOg) {
@@ -245,6 +245,13 @@ class Group {
                     });
                     return imgs;
                 }, attach, selectors);
+                url = await this.page.evaluate((el, sel) => {
+                    const urlElm = el.querySelector(sel.post.url);
+                    if (urlElm) {
+                        return urlElm.getAttribute('href');
+                    }
+                    return null;
+                }, attach, selectors);
                 file = await this.page.evaluate((el, sel) => {
                     const fileElm = el.querySelector(sel.post.file);
                     if (fileElm) {
@@ -261,6 +268,7 @@ class Group {
                 contentHtml,
                 background,
                 images,
+                url,
                 file,
             };
         };
@@ -277,6 +285,7 @@ class Group {
             contentHtml: postContent.contentHtml,
             background: postContent.background,
             images: postContent.images,
+            url: postContent.url,
             file: postContent.file,
         };
         return groupPost;

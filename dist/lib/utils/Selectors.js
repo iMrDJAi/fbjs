@@ -31,5 +31,6 @@ Selectors.post = {
     get is_attach() { return `${this.attach}> :nth-last-child(2)`; },
     img: 'img',
     file: 'div:only-child > a[aria-label][role=link]',
+    url: 'div:only-child > a[target=_blank][role=link]',
     video: 'a',
 };
