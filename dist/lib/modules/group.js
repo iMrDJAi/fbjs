@@ -250,6 +250,7 @@ class Group {
                     });
                     return imgs;
                 }, attach, selectors);
+                images = images.map(fb_helpers_1.normalizeImgURL);
                 url = await this.page.evaluate((el, sel) => {
                     const urlElm = el.querySelector(sel.post.url);
                     if (urlElm) {
@@ -257,7 +258,7 @@ class Group {
                     }
                     return null;
                 }, attach, selectors);
-                url = (0, fb_helpers_1.decodeURL)(url);
+                url = (0, fb_helpers_1.normalizeURL)(url);
                 file = await this.page.evaluate((el, sel) => {
                     const fileElm = el.querySelector(sel.post.file);
                     if (fileElm) {

@@ -172,12 +172,27 @@ export async function selectHnd(
   return hnd;
 }
 
-export function decodeURL(fbUrl: string | null) {
-  const fbPrefix = 'https://l.facebook.com/l.php?u=';
-  let url = fbUrl;
-  if (url && url.startsWith(fbPrefix)) {
-    url = url.replace(fbPrefix, '');
-    url = decodeURIComponent(url);
+export function removeFbclid(url: string | null) {
+  if (url) {
+    const urlObj = new URL(url);
+    urlObj.searchParams.delete('fbclid');
+    return urlObj.toString();
+  }
+  return url;
+}
+
+export function normalizeURL(url: string | null) {
+  if (url && url.startsWith('https://l.facebook.com/l.php')) {
+    const urlObj = new URL(url);
+    return removeFbclid(urlObj.searchParams.get('u'));
+  }
+  return url;
+}
+
+export function normalizeImgURL(url: string | null) {
+  if (url && url.includes('fbcdn.net/safe_image.php?')) {
+    const urlObj = new URL(url);
+    return urlObj.searchParams.get('url');
   }
   return url;
 }

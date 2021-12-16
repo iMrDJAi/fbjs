@@ -1,7 +1,7 @@
 import { BrowserContext, ElementHandle, Page } from 'puppeteer';
 import {
   autoScroll, generateFacebookGroupURLById, savePost, promiseTimeout,
-  blankTab, disableAssetsLoad, selectHnd, decodeURL,
+  blankTab, disableAssetsLoad, selectHnd, normalizeURL, normalizeImgURL,
 } from '../utils/fb_helpers';
 import Post from '../models/Post';
 import Options from '../models/options';
@@ -424,6 +424,7 @@ export default class Group {
           attach,
           selectors,
         );
+        images = images.map(normalizeImgURL);
 
         url = await this.page.evaluate(
           (el: HTMLElement, sel: typeof Selectors) => {
@@ -436,7 +437,7 @@ export default class Group {
           attach,
           selectors,
         );
-        url = decodeURL(url);
+        url = normalizeURL(url);
 
         file = await this.page.evaluate(
           (el: HTMLElement, sel: typeof Selectors) => {

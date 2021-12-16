@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.decodeURL = exports.selectHnd = exports.checkLoginStatus = exports.blankTab = exports.disableAssetsLoad = exports.acceptCookies = exports.promiseTimeout = exports.autoScroll = exports.sleep = exports.savePost = exports.getOldPublications = exports.generateFacebookGroupURLById = void 0;
+exports.normalizeImgURL = exports.normalizeURL = exports.removeFbclid = exports.selectHnd = exports.checkLoginStatus = exports.blankTab = exports.disableAssetsLoad = exports.acceptCookies = exports.promiseTimeout = exports.autoScroll = exports.sleep = exports.savePost = exports.getOldPublications = exports.generateFacebookGroupURLById = void 0;
 const fs_1 = __importDefault(require("fs"));
 function generateFacebookGroupURLById(id, sort) {
     const url = sort
@@ -121,13 +121,28 @@ async function selectHnd(parent, selector) {
     return hnd;
 }
 exports.selectHnd = selectHnd;
-function decodeURL(fbUrl) {
-    const fbPrefix = 'https://l.facebook.com/l.php?u=';
-    let url = fbUrl;
-    if (url && url.startsWith(fbPrefix)) {
-        url = url.replace(fbPrefix, '');
-        url = decodeURIComponent(url);
+function removeFbclid(url) {
+    if (url) {
+        const urlObj = new URL(url);
+        urlObj.searchParams.delete('fbclid');
+        return urlObj.toString();
     }
     return url;
 }
-exports.decodeURL = decodeURL;
+exports.removeFbclid = removeFbclid;
+function normalizeURL(url) {
+    if (url && url.startsWith('https://l.facebook.com/l.php')) {
+        const urlObj = new URL(url);
+        return removeFbclid(urlObj.searchParams.get('u'));
+    }
+    return url;
+}
+exports.normalizeURL = normalizeURL;
+function normalizeImgURL(url) {
+    if (url && url.includes('fbcdn.net/safe_image.php?')) {
+        const urlObj = new URL(url);
+        return urlObj.searchParams.get('url');
+    }
+    return url;
+}
+exports.normalizeImgURL = normalizeImgURL;

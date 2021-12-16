@@ -14,4 +14,6 @@ export declare function blankTab(context: BrowserContext, options?: Options & {
 }): Promise<Page | undefined>;
 export declare function checkLoginStatus(res: HTTPResponse): Promise<boolean>;
 export declare function selectHnd(parent: ElementHandle | Page, selector: string): Promise<ElementHandle | null>;
-export declare function decodeURL(fbUrl: string | null): string | null;
+export declare function removeFbclid(url: string | null): string | null;
+export declare function normalizeURL(url: string | null): string | null;
+export declare function normalizeImgURL(url: string | null): string | null;
