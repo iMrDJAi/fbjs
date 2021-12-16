@@ -26,7 +26,7 @@ Selectors.post = {
     get is_txt() { return `${this.txt}> div:only-child`; },
     get bg() { return `${this.txt}[class] div[class][style]`; },
     get bg_txt() { return `${this.bg}> div:nth-child(2)`; },
-    see_more: 'div[role=button]',
+    see_more: 'div > div[role=button]',
     see_og: 'blockquote span + div[role=button]',
     get attach() { return `${this.content}> div:last-child[class][id]`; },
     get is_attach() { return `${this.attach}> :nth-last-child(2)`; },
