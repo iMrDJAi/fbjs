@@ -257,7 +257,7 @@ class Group {
                     }
                     return null;
                 }, attach, selectors);
-                (0, fb_helpers_1.decodeURL)(url);
+                url = (0, fb_helpers_1.decodeURL)(url);
                 file = await this.page.evaluate((el, sel) => {
                     const fileElm = el.querySelector(sel.post.file);
                     if (fileElm) {

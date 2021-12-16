@@ -172,7 +172,7 @@ export async function selectHnd(
   return hnd;
 }
 
-export async function decodeURL(fbUrl: string | null) {
+export function decodeURL(fbUrl: string | null) {
   const fbPrefix = 'https://l.facebook.com/l.php?u=';
   let url = fbUrl;
   if (url && url.startsWith(fbPrefix)) {

@@ -436,7 +436,7 @@ export default class Group {
           attach,
           selectors,
         );
-        decodeURL(url);
+        url = decodeURL(url);
 
         file = await this.page.evaluate(
           (el: HTMLElement, sel: typeof Selectors) => {

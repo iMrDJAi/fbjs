@@ -121,7 +121,7 @@ async function selectHnd(parent, selector) {
     return hnd;
 }
 exports.selectHnd = selectHnd;
-async function decodeURL(fbUrl) {
+function decodeURL(fbUrl) {
     const fbPrefix = 'https://l.facebook.com/l.php?u=';
     let url = fbUrl;
     if (url && url.startsWith(fbPrefix)) {
