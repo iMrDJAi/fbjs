@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.selectHnd = exports.checkLoginStatus = exports.blankTab = exports.disableAssetsLoad = exports.acceptCookies = exports.promiseTimeout = exports.autoScroll = exports.sleep = exports.savePost = exports.getOldPublications = exports.generateFacebookGroupURLById = void 0;
+exports.decodeURL = exports.selectHnd = exports.checkLoginStatus = exports.blankTab = exports.disableAssetsLoad = exports.acceptCookies = exports.promiseTimeout = exports.autoScroll = exports.sleep = exports.savePost = exports.getOldPublications = exports.generateFacebookGroupURLById = void 0;
 const fs_1 = __importDefault(require("fs"));
 function generateFacebookGroupURLById(id, sort) {
     const url = sort
@@ -121,3 +121,13 @@ async function selectHnd(parent, selector) {
     return hnd;
 }
 exports.selectHnd = selectHnd;
+async function decodeURL(fbUrl) {
+    const fbPrefix = 'https://l.facebook.com/l.php?u=';
+    let url = fbUrl;
+    if (url && url.startsWith(fbPrefix)) {
+        url = url.replace(fbPrefix, '');
+        url = decodeURIComponent(url);
+    }
+    return url;
+}
+exports.decodeURL = decodeURL;

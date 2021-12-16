@@ -13,6 +13,7 @@ export default class Selectors {
     static post: {
         element: string;
         permalink: string;
+        activity: string;
         author_name: string;
         author_name_alt: string;
         author_avatar: string;

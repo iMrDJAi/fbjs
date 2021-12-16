@@ -1,7 +1,7 @@
 import { BrowserContext, ElementHandle, Page } from 'puppeteer';
 import {
-  autoScroll, generateFacebookGroupURLById, savePost,
-  promiseTimeout, blankTab, disableAssetsLoad, selectHnd,
+  autoScroll, generateFacebookGroupURLById, savePost, promiseTimeout,
+  blankTab, disableAssetsLoad, selectHnd, decodeURL,
 } from '../utils/fb_helpers';
 import Post from '../models/Post';
 import Options from '../models/options';
@@ -295,7 +295,8 @@ export default class Group {
     const getPostAuthor = async (postElm: HTMLElement, sel: typeof Selectors) => {
       let authorName: string | null,
         authorUrl: string | null,
-        authorAvatar: string | null;
+        authorAvatar: string | null,
+        activity: string | null;
 
       // Not all posts provide the author profile url
       let authorElm = <HTMLElement>postElm.querySelector(sel.post.author_name);
@@ -320,10 +321,18 @@ export default class Group {
         authorAvatar = null;
       }
 
+      const activityElm = <HTMLElement>postElm.querySelector(sel.post.activity);
+      const nodes = Array.from(activityElm.childNodes);
+      nodes.shift();
+
+      // eslint-disable-next-line
+      activity = nodes.map((node) => node.textContent).join('') || null;
+
       return {
         authorName,
         authorUrl,
         authorAvatar,
+        activity,
       };
     };
 
@@ -427,6 +436,7 @@ export default class Group {
           attach,
           selectors,
         );
+        decodeURL(url);
 
         file = await this.page.evaluate(
           (el: HTMLElement, sel: typeof Selectors) => {
@@ -461,6 +471,7 @@ export default class Group {
       authorName: <string>postAuthor.authorName,
       authorUrl: <string | null>postAuthor.authorUrl,
       authorAvatar: <string | null>postAuthor.authorAvatar,
+      activity: <string | null>postAuthor.activity,
       date: <string>postMetadata.date,
       timestamp: <number>postMetadata.timestamp,
       permalink: <string>postMetadata.permalink,

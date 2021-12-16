@@ -14,3 +14,4 @@ export declare function blankTab(context: BrowserContext, options?: Options & {
 }): Promise<Page | undefined>;
 export declare function checkLoginStatus(res: HTTPResponse): Promise<boolean>;
 export declare function selectHnd(parent: ElementHandle | Page, selector: string): Promise<ElementHandle | null>;
+export declare function decodeURL(fbUrl: string | null): Promise<string | null>;

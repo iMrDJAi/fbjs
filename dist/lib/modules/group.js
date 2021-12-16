@@ -168,7 +168,7 @@ class Group {
         };
         const postMetadata = await getPostMetadata();
         const getPostAuthor = async (postElm, sel) => {
-            let authorName, authorUrl, authorAvatar;
+            let authorName, authorUrl, authorAvatar, activity;
             let authorElm = postElm.querySelector(sel.post.author_name);
             if (authorElm) {
                 authorName = authorElm.innerText;
@@ -186,10 +186,15 @@ class Group {
             else {
                 authorAvatar = null;
             }
+            const activityElm = postElm.querySelector(sel.post.activity);
+            const nodes = Array.from(activityElm.childNodes);
+            nodes.shift();
+            activity = nodes.map((node) => node.textContent).join('') || null;
             return {
                 authorName,
                 authorUrl,
                 authorAvatar,
+                activity,
             };
         };
         const postAuthor = await this.page.evaluate(getPostAuthor, postHnd, selectors);
@@ -252,6 +257,7 @@ class Group {
                     }
                     return null;
                 }, attach, selectors);
+                (0, fb_helpers_1.decodeURL)(url);
                 file = await this.page.evaluate((el, sel) => {
                     const fileElm = el.querySelector(sel.post.file);
                     if (fileElm) {
@@ -277,6 +283,7 @@ class Group {
             authorName: postAuthor.authorName,
             authorUrl: postAuthor.authorUrl,
             authorAvatar: postAuthor.authorAvatar,
+            activity: postAuthor.activity,
             date: postMetadata.date,
             timestamp: postMetadata.timestamp,
             permalink: postMetadata.permalink,
