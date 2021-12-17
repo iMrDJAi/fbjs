@@ -1,14 +1,17 @@
-import { BrowserContext } from 'puppeteer';
+import { BrowserContext, Page } from 'puppeteer';
 import Post from '../models/Post';
 import Options from '../models/options';
 export default class Group {
-    private options;
-    private context;
-    private page;
-    private id;
-    private sort?;
-    private get url();
-    private stopped;
+    options: Options & {
+        cookiesFile: string;
+    };
+    context: BrowserContext;
+    page: Page;
+    id: string;
+    sort?: string;
+    get url(): string;
+    name: string;
+    stopped: boolean;
     constructor(options: Options & {
         cookiesFile: string;
     }, context: BrowserContext, id: string, sort?: string);

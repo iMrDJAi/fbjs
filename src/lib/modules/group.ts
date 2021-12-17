@@ -10,21 +10,23 @@ import Selectors from '../utils/Selectors';
 const selectors = JSON.parse(JSON.stringify({ ...Selectors }));
 
 export default class Group {
-  private options: Options & { cookiesFile: string };
+  public options: Options & { cookiesFile: string };
 
-  private context: BrowserContext;
+  public context: BrowserContext;
 
-  private page: Page;
+  public page: Page;
 
-  private id: string;
+  public id: string;
 
-  private sort? : string;
+  public sort? : string;
 
-  private get url() {
+  public get url() {
     return generateFacebookGroupURLById(this.id, this.sort);
   }
 
-  private stopped: boolean = false;
+  public name: string;
+
+  public stopped: boolean = false;
 
   constructor(
     options: Options & { cookiesFile: string },
@@ -37,6 +39,7 @@ export default class Group {
     this.page = null!;
     this.id = id;
     this.sort = sort;
+    this.name = null!;
   }
 
   /**
@@ -77,9 +80,10 @@ export default class Group {
     // Extract the group name
     const groupNameElm = await this.page.$(Selectors.group.name);
     const groupName = await this.page.evaluate(
-      (el: HTMLElement) => el.textContent,
+      (el: HTMLElement) => el.textContent!,
       groupNameElm,
     );
+    this.name = groupName;
     console.log(groupName);
 
     /**
@@ -295,6 +299,7 @@ export default class Group {
     const getPostAuthor = async (postElm: HTMLElement, sel: typeof Selectors) => {
       let authorName: string | null,
         authorUrl: string | null,
+        authorGrpPf: string | null,
         authorAvatar: string | null,
         activity: string | null;
 
@@ -303,11 +308,14 @@ export default class Group {
 
       if (authorElm) {
         authorName = authorElm.innerText;
-        authorUrl = authorElm.getAttribute('href')!.replace(/(\/?\?.+)$/, '');
+        const url = authorElm.getAttribute('href')!.replace(/(\/?\?.+)$/, '');
+        authorUrl = `https://www.facebook.com/profile${url.replace(/\/groups\/\d+\/user/, '')}`;
+        authorGrpPf = `https://www.facebook.com${url}`;
       } else {
         authorElm = <HTMLElement>postElm.querySelector(sel.post.author_name_alt);
         authorName = authorElm.innerText;
         authorUrl = null;
+        authorGrpPf = null;
       }
 
       /**
@@ -331,6 +339,7 @@ export default class Group {
       return {
         authorName,
         authorUrl,
+        authorGrpPf,
         authorAvatar,
         activity,
       };
@@ -469,8 +478,11 @@ export default class Group {
 
     // creates a post object which contains our post data
     const groupPost: Post = {
+      groupName: <string> this.name,
+      groupUrl: <string> this.url,
       authorName: <string>postAuthor.authorName,
       authorUrl: <string | null>postAuthor.authorUrl,
+      authorGrpPf: <string | null>postAuthor.authorGrpPf,
       authorAvatar: <string | null>postAuthor.authorAvatar,
       activity: <string | null>postAuthor.activity,
       date: <string>postMetadata.date,

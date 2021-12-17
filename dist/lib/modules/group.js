@@ -14,6 +14,7 @@ class Group {
         this.page = null;
         this.id = id;
         this.sort = sort;
+        this.name = null;
     }
     get url() {
         return (0, fb_helpers_1.generateFacebookGroupURLById)(this.id, this.sort);
@@ -32,6 +33,7 @@ class Group {
         await this.page.waitForSelector(Selectors_1.default.group.name);
         const groupNameElm = await this.page.$(Selectors_1.default.group.name);
         const groupName = await this.page.evaluate((el) => el.textContent, groupNameElm);
+        this.name = groupName;
         console.log(groupName);
         this.page.evaluate(fb_helpers_1.autoScroll);
         await this.page.waitForSelector(Selectors_1.default.group.feed);
@@ -168,16 +170,19 @@ class Group {
         };
         const postMetadata = await getPostMetadata();
         const getPostAuthor = async (postElm, sel) => {
-            let authorName, authorUrl, authorAvatar, activity;
+            let authorName, authorUrl, authorGrpPf, authorAvatar, activity;
             let authorElm = postElm.querySelector(sel.post.author_name);
             if (authorElm) {
                 authorName = authorElm.innerText;
-                authorUrl = authorElm.getAttribute('href').replace(/(\/?\?.+)$/, '');
+                const url = authorElm.getAttribute('href').replace(/(\/?\?.+)$/, '');
+                authorUrl = `https://www.facebook.com/profile${url.replace(/\/groups\/\d+\/user/, '')}`;
+                authorGrpPf = `https://www.facebook.com${url}`;
             }
             else {
                 authorElm = postElm.querySelector(sel.post.author_name_alt);
                 authorName = authorElm.innerText;
                 authorUrl = null;
+                authorGrpPf = null;
             }
             const authorAvatarElm = postElm.querySelector(sel.post.author_avatar);
             if (authorAvatarElm) {
@@ -193,6 +198,7 @@ class Group {
             return {
                 authorName,
                 authorUrl,
+                authorGrpPf,
                 authorAvatar,
                 activity,
             };
@@ -281,8 +287,11 @@ class Group {
         };
         const postContent = await getPostContent();
         const groupPost = {
+            groupName: this.name,
+            groupUrl: this.url,
             authorName: postAuthor.authorName,
             authorUrl: postAuthor.authorUrl,
+            authorGrpPf: postAuthor.authorGrpPf,
             authorAvatar: postAuthor.authorAvatar,
             activity: postAuthor.activity,
             date: postMetadata.date,

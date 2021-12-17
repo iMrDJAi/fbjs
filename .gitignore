@@ -9,3 +9,4 @@ static
 !spec/support/jasmine.json
 //dist
 .idea
+tsconfig.tsbuildinfo

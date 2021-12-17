@@ -1,6 +1,9 @@
 export default interface Post {
+  groupName: string | null,
+  groupUrl: string | null,
   authorName: string,
   authorUrl: string | null,
+  authorGrpPf: string | null,
   authorAvatar: string | null,
   activity: string | null,
   date: string,
