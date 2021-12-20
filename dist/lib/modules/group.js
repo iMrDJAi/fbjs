@@ -145,7 +145,7 @@ class Group {
                 console.error('Date: ', err.message);
                 return await getPostMetadata();
             }
-            timestamp = +date;
+            timestamp = +new Date(date);
             try {
                 permalink = await this.page.evaluate((el) => el.getAttribute('href').replace(/(\/\?.+)$/, ''), postLink);
             }
