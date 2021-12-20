@@ -259,7 +259,7 @@ export default class Group {
 
       // Date to timestamp
       // eslint-disable-next-line
-      timestamp = +date;
+      timestamp = + new Date(date);
       // False positive ._.
 
       // Grab the permalink
