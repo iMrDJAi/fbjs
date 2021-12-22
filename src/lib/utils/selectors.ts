@@ -29,7 +29,7 @@ export default class Selectors {
     get bg() { return `${this.txt}[class] div[class][style]`; },
     get bg_txt() { return `${this.bg}> div:nth-child(2)`; },
 
-    see_more: 'div > div[role=button]',
+    see_more: ':is(div, span[class]) > div[role=button]',
     see_og: 'blockquote span + div[role=button]',
 
     get attach() { return `${this.content}> div:last-child[class][id]`; },
